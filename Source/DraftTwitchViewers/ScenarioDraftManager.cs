@@ -76,6 +76,10 @@ namespace DraftTwitchViewers
         private const float maxSaveDelay = 1f;
 
         #endregion
+        
+        #region statics
+        static ConfigNode[] traitConfigs = null;
+        #endregion
 
         #region Properties
 
@@ -584,8 +588,13 @@ namespace DraftTwitchViewers
                         // Randomize the job if none was specified.
                         if (realJob == "Any")
                         {
-                            int randomJob = UnityEngine.Random.Range(0, 3);
-                            realJob = (randomJob == 0 ? "Pilot" : (randomJob == 1 ? "Engineer" : "Scientist"));
+                            if (traitConfigs == null)
+                            {
+                                traitConfigs = GameDatabase.Instance.GetConfigNodes("EXPERIENCE_TRAIT");
+                            }
+                
+                            int r = random.Next(traitConfigs.Count());
+                            realJob = traitConfigs.ElementAt(r).GetValue("name");
                         }
 
                         // Perform the search loop at least once, and repeat until success or failure.
